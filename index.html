@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Magic Review Board</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Submit Your Feedback</h1>
+
+  <form id="reviewForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" placeholder="Your name" required>
+
+    <label for="rating">Rating (1 to 5 stars):</label>
+    <select id="rating" required>
+      <option value="" disabled selected>Select your rating</option>
+      <option value="1">1 Star</option>
+      <option value="2">2 Stars</option>
+      <option value="3">3 Stars</option>
+      <option value="4">4 Stars</option>
+      <option value="5">5 Stars</option>
+    </select>
+
+    <label for="feedback">Your Feedback:</label>
+    <textarea id="feedback" rows="5" placeholder="Write your feedback here..." required></textarea>
+
+    <button type="submit">Submit Feedback</button>
+  </form>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbz50Z_tZugjZ03KDZFdMBoIKuQiE80NzLR9kbMycA09jbraoeXsbwh2dFgHOPteEr8/exec'; // Replace this with your deployed Web App URL
+    const googleReviewUrl = 'https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE'; // Replace with your actual Place ID
+
+    document.getElementById('reviewForm').addEventListener('submit', e => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const rating = document.getElementById('rating').value;
+      const feedback = document.getElementById('feedback').value.trim();
+
+      if (!name || !rating || !feedback) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      if (rating === '4' || rating === '5') {
+        window.location.href = googleReviewUrl;
+        return;
+      }
+
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify({ name, rating, feedback }),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert('Thank you for your feedback!');
+        document.getElementById('reviewForm').reset();
+      })
+      .catch(error => {
+        alert('Oops! Something went wrong.');
+        console.error('Error!', error.message);
+      });
+    });
+  </script>
+
+</body>
+</html>
